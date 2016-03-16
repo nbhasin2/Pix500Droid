@@ -54,9 +54,9 @@ public class PhotoPagerAdapter extends PagerAdapter  {
     public Object instantiateItem(ViewGroup container, int position) {
         Context context = this.activity.getApplicationContext();
 
-        if (position == (imageData.size() - 1)) {
-            ((DetailActivity) activity).serverConnectionHelper.fetchNextPhotoPage();
-        }
+//        if (position == (imageData.size() - 1)) {
+//            ((DetailActivity) activity).serverConnectionHelper.fetchNextPhotoPage();
+//        }
 
         ImageView imageView = new ImageView(context);
         int padding = context.getResources().getDimensionPixelSize(
