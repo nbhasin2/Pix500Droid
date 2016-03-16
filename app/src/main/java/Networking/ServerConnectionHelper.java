@@ -1,5 +1,6 @@
 package Networking;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -18,32 +19,51 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import Shared.SharedConstants;
+import epicara.pix500.DetailActivity;
 import epicara.pix500.MainActivity;
 
 /**
  * Created by nishant on 16-03-10.
  */
-public class ServerConnectionHelper {
+public class ServerConnectionHelper implements Serializable{
     String JsonURL = SharedConstants.fetchServerPhotos;
     // This string will hold the results
+
     String data = "";
+
     // Defining the Volley request queue that handles the URL request concurrently
+
     RequestQueue requestQueue;
 
     // Pages
-    int currentPage = 0;
-    int totalPages = 0;
+    public int currentPage = 0;
+    public int totalPages = 0;
 
     Context context;
-    MainActivity activity;
+    Activity activity;
+
+    public Boolean isMainActivity = false;
+    public Boolean isDetailActivity = false;
+
     // Array of PhotoData Objects
     public ArrayList<PhotoData> photoDataList;
 
+    // Constructor
     public ServerConnectionHelper(MainActivity activity)
     {
+        this.isMainActivity = true;
+        this.activity = activity;
+        this.context = activity.getApplicationContext();
+        this.photoDataList = new ArrayList<PhotoData>();
+    }
+
+    public ServerConnectionHelper(DetailActivity activity)
+    {
+        this.isDetailActivity = true;
         this.activity = activity;
         this.context = activity.getApplicationContext();
         this.photoDataList = new ArrayList<PhotoData>();
@@ -116,7 +136,15 @@ public class ServerConnectionHelper {
 
                             // Update gridview datalist
 
-                            activity.gridAdapter.setGridData(photoDataList);
+                        if(isDetailActivity)
+                        {
+                            ((DetailActivity) activity).adapter.setPagerData(photoDataList);
+
+                        }else if(isMainActivity)
+                        {
+                            ((MainActivity) activity).gridAdapter.setGridData(photoDataList);
+                        }
+
 
                         } catch (JSONException e) {
                         e.printStackTrace();

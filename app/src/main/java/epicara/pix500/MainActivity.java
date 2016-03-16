@@ -2,14 +2,10 @@ package epicara.pix500;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -17,15 +13,13 @@ import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 
 import com.model.json.PhotoData;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
 import java.util.ArrayList;
 
 import Adapter.PhotoGridAdapter;
+import General.DataWrapper;
 import Networking.ServerConnectionHelper;
 
 public class MainActivity extends AppCompatActivity
@@ -74,8 +68,15 @@ public class MainActivity extends AppCompatActivity
         this.gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 ImageView imageView = (ImageView) v.findViewById(R.id.grid_item_image);
-//                int[] screenLocation = new int[2];
-//                imageView.getLocationOnScreen(screenLocation);
+
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("position",position);
+                intent.putExtra("data", new DataWrapper(gridDataList));
+                intent.putExtra("currentPage", serverconnectionhelper.currentPage);
+                intent.putExtra("totalPages", serverconnectionhelper.totalPages);
+                int[] screenLocation = new int[2];
+                imageView.getLocationOnScreen(screenLocation);
+                startActivity(intent);
             }
         });
     }
