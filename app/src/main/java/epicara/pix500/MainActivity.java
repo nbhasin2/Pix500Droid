@@ -1,8 +1,10 @@
 package epicara.pix500;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,56 +14,70 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
 
+import com.model.json.PhotoData;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 
+import java.util.ArrayList;
+
+import Adapter.PhotoGridAdapter;
 import Networking.ServerConnectionHelper;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    // Variables
+
     public ServerConnectionHelper serverconnectionhelper;
+
+    // Grid view related variables
+
+    private GridView gridView;
+    public PhotoGridAdapter gridAdapter;
+    private ArrayList<PhotoData> gridDataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        // Initialization
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        initializeActivity();
+        this.fetchPhotos();
+        this.setUpGridView();
     }
 
-    // Initializers
+    // Initializes the server connection helper and fetches data from the server
 
-    public void initializeActivity()
+    public void fetchPhotos()
     {
-        this.serverconnectionhelper = new ServerConnectionHelper(this.getApplicationContext());
-
-        // Create global configuration and initialize ImageLoader with this config
-        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this).build();
-        ImageLoader.getInstance().init(config);
-
+        this.serverconnectionhelper = new ServerConnectionHelper(this);
         this.serverconnectionhelper.fetchFirstPhotoPage();
+    }
+
+    // Setup Gridview to display the newly fetched data from the server
+
+    public void setUpGridView()
+    {
+        this.gridView = (GridView) findViewById(R.id.gridView);
+        this.gridDataList = this.serverconnectionhelper.photoDataList;
+        this.gridAdapter = new PhotoGridAdapter(this, R.layout.grid_item_layout, this.gridDataList);
+        this.gridView.setAdapter(this.gridAdapter);
+        this.gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                ImageView imageView = (ImageView) v.findViewById(R.id.grid_item_image);
+//                int[] screenLocation = new int[2];
+//                imageView.getLocationOnScreen(screenLocation);
+            }
+        });
     }
 
     @Override
@@ -99,25 +115,6 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 }

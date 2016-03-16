@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import Shared.SharedConstants;
+import epicara.pix500.MainActivity;
 
 /**
  * Created by nishant on 16-03-10.
@@ -37,13 +38,14 @@ public class ServerConnectionHelper {
     int totalPages = 0;
 
     Context context;
-
+    MainActivity activity;
     // Array of PhotoData Objects
     public ArrayList<PhotoData> photoDataList;
 
-    public ServerConnectionHelper(Context context)
+    public ServerConnectionHelper(MainActivity activity)
     {
-        this.context = context;
+        this.activity = activity;
+        this.context = activity.getApplicationContext();
         this.photoDataList = new ArrayList<PhotoData>();
     }
 
@@ -111,6 +113,11 @@ public class ServerConnectionHelper {
                             }
 
                             Log.d("Size -- ","" + photoDataList.size());
+
+                            // Update gridview datalist
+
+                            activity.gridAdapter.setGridData(photoDataList);
+
                         } catch (JSONException e) {
                         e.printStackTrace();
                     }
